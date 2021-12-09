@@ -30,3 +30,6 @@ new PipelineStack(app, 'CognitoProdPipelineStack', {
 })
 
 app.synth()
+
+//cdk bootstrap --profile aws_dev --trust 012916043370 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://156343143379/us-east-1
+//cdk bootstrap --profile aws_prod --trust 012916043370 --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://385611006416/us-east-1

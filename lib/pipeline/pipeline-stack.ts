@@ -1,5 +1,6 @@
 import * as cdk from "@aws-cdk/core"
 import { CodePipeline, CodePipelineSource, ShellStep } from "@aws-cdk/pipelines"
+import { CognitoStage } from './cognito-stage'
 
 interface PipelineStackProps extends cdk.StackProps {
     branch: string,
@@ -26,5 +27,13 @@ export class PipelineStack extends cdk.Stack {
         })
 
         //Add the stage here
+        const cognitoStage = new CognitoStage(this, props.branch.concat("Stage"), {
+            branch: props.branch,
+            env: {
+                account: props.awsAccount,
+                region: props.awsRegion
+            }
+        })
+        pipeline.addStage(cognitoStage)
     }
 }
