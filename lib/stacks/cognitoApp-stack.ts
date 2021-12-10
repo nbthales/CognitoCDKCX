@@ -74,7 +74,7 @@ export class CognitoAppStack extends cdk.Stack {
         phone: false
       },
       userVerification: {
-        emailSubject: "Verique seu e-mail",
+        emailSubject: "Verifique seu e-mail",
         emailBody: "Obrigado por se registrar. Seu código de verificação é {####}",
         emailStyle: cognito.VerificationEmailStyle.CODE
       },
@@ -100,7 +100,7 @@ export class CognitoAppStack extends cdk.Stack {
     })
     customerUserPool.addDomain("CustomerDomain", {
       cognitoDomain: {
-        domainPrefix: props.branch.concat('-pcs-customer-service')
+        domainPrefix: props.branch.concat('-terra-customer-service')
       }
     })
 
@@ -114,7 +114,7 @@ export class CognitoAppStack extends cdk.Stack {
         phone: false
       },
       userVerification: {
-        emailSubject: "Verique seu e-mail",
+        emailSubject: "Verifique seu e-mail",
         emailBody: "Obrigado por se registrar. Seu código de verificação é {####}",
         emailStyle: cognito.VerificationEmailStyle.CODE
       },
@@ -140,7 +140,7 @@ export class CognitoAppStack extends cdk.Stack {
     })
     adminUserPool.addDomain("AdminDomain", {
       cognitoDomain: {
-        domainPrefix: props.branch.concat('-pcs-admin-service')
+        domainPrefix: props.branch.concat('-terra-admin-service')
       }
     })
 
@@ -152,22 +152,24 @@ export class CognitoAppStack extends cdk.Stack {
       scopeName: "mobile",
       scopeDescription: "Customer mobile operation"
     })
+
     const adminWebScope = new cognito.ResourceServerScope({
       scopeName: "web",
       scopeDescription: "Admin web operation"
     })
-
 
     const customerResourceServer = customerUserPool.addResourceServer("CustomerResourceServer", {
       identifier: "customer",
       userPoolResourceServerName: "CustomerResourceServer",
       scopes: [customerWebScope, customerMobileScope]
     })
-    const adminResourceServer = customerUserPool.addResourceServer("AdminResourceServer", {
+
+    const adminResourceServer = adminUserPool.addResourceServer("AdminResourceServer", {
       identifier: "admin",
       userPoolResourceServerName: "AdminResourceServer",
       scopes: [adminWebScope]
     })
+
     customerUserPool.addClient('customer-web-client', {
       userPoolClientName: 'customerWebClient',
       authFlows: {
@@ -180,6 +182,7 @@ export class CognitoAppStack extends cdk.Stack {
         cognito.OAuthScope.COGNITO_ADMIN]
       }
     })
+
     customerUserPool.addClient('customer-mobile-client', {
       userPoolClientName: 'customerMobileClient',
       authFlows: {
@@ -192,6 +195,7 @@ export class CognitoAppStack extends cdk.Stack {
         cognito.OAuthScope.COGNITO_ADMIN]
       }
     })
+
     adminUserPool.addClient('admin-web-client', {
       userPoolClientName: 'adminWebClient',
       authFlows: {
@@ -204,16 +208,15 @@ export class CognitoAppStack extends cdk.Stack {
       }
     })
 
-
     const productsAuthorizer = new apigateway.CognitoUserPoolsAuthorizer(this, 'ProductsAuthorizer', {
       cognitoUserPools: [customerUserPool, adminUserPool],
       authorizerName: "ProductsAuthorizer"
     })
+
     const productsAdminAuthorizer = new apigateway.CognitoUserPoolsAuthorizer(this, 'ProductsAdminAuthorizer', {
       cognitoUserPools: [adminUserPool],
       authorizerName: "ProductsAdminAuthorizer"
     })
-
 
     const productsFetchHandler = new lambdaNodeJS.NodejsFunction(this, "ProductsFetchFunction", {
       functionName: "ProductsFetchFunction",
@@ -258,7 +261,6 @@ export class CognitoAppStack extends cdk.Stack {
       authorizationType: apigateway.AuthorizationType.COGNITO,
       authorizationScopes: ['admin/web']
     }
-
     const productsResource = api.root.addResource("products")
 
     //GET all products - web and mobile (customer, admin)
