@@ -16,7 +16,7 @@ exports.handler = async function (event, context) {
    const method = event.httpMethod;
 
    const params = {
-      AccessToken = event.headers.Authorization
+      AccessToken: event.headers.Authorization
    }
    const userInfo = await cognitoIdentityServiceProvider.getUser(params).promise()
    console.log(userInfo)
