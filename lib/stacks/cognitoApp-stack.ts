@@ -204,7 +204,8 @@ export class CognitoAppStack extends cdk.Stack {
       accessTokenValidity: cdk.Duration.minutes(60),
       refreshTokenValidity: cdk.Duration.days(7),
       oAuth: {
-        scopes: [cognito.OAuthScope.resourceServer(adminResourceServer, adminWebScope)]
+        scopes: [cognito.OAuthScope.resourceServer(adminResourceServer, adminWebScope),
+        cognito.OAuthScope.COGNITO_ADMIN]
       }
     })
 
